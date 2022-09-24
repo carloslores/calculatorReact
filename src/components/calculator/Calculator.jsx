@@ -7,8 +7,12 @@ const Calculator = () => {
   const [newNum, setNewNum] = useState(false);
   const [isSum, setIstSum] = useState(false);
   const [isRest, setIstRest] = useState(false);
+  const [isMultiply, setIstMultiply] = useState(false);
+  const [isDivide, setIstDivide] = useState(false);
+  const [operateScreenValue, setOperateScreenValue] = useState(false);
 
   const printOnScreen = (numValue) => {
+    console.log("operateScreenValue", operateScreenValue);
     if (!numValue) {
       setActuaNum(["0"]);
     } else {
@@ -17,7 +21,14 @@ const Calculator = () => {
   };
 
   const transformDataValues = (num) => {
-    const newActualNumbber = `${actualNum.join("")}${num}`.split("");
+    let newActualNumbber;
+    if (operateScreenValue) {
+      setOldNum(actualNum);
+      newActualNumbber = [num];
+    } else {
+      newActualNumbber = `${actualNum.join("")}${num}`.split("");
+    }
+
     if (newActualNumbber.length > 1 && newActualNumbber[0] == 0) {
       newActualNumbber.shift();
     }
@@ -28,24 +39,96 @@ const Calculator = () => {
     return +value.join("");
   };
 
-  const sum = (callOnUseEffect) => {
-    let resultSum = null;
+  const sum = (operation, callOnUseEffect) => {
     if (callOnUseEffect) {
-      console.log(oldNum);
-      console.log(actualNum);
       const resultSum = [transformeToInt(oldNum) + transformeToInt(actualNum)];
-      setActuaNum(resultSum);
-      setNewNum(false);
-      setIstSum(false);
+      return resultSum;
+    }
+  };
+
+  const rest = (callOnUseEffect) => {
+    if (callOnUseEffect) {
+      const resultRest = [transformeToInt(oldNum) - transformeToInt(actualNum)];
+      return resultRest;
+    }
+  };
+
+  const multiply = (callOnUseEffect) => {
+    if (callOnUseEffect) {
+      const resultMultiply = [
+        transformeToInt(oldNum) * transformeToInt(actualNum),
+      ];
+      return resultMultiply;
+    }
+  };
+
+  const handleOperation = (operation, callOnUseEffectOrSecondTime) => {
+    if (!callOnUseEffectOrSecondTime) {
+      switch (operation) {
+        case "sum":
+          if (isSum) {
+            handleStateNum("sum", sum(true));
+          }
+          break;
+        case "rest":
+          if (isRest) {
+            handleStateNum("rest", rest(true));
+          }
+          break;
+        case "multiply":
+          if (isMultiply) {
+            handleStateNum("multiply", multiply(true));
+          }
+          break;
+      }
+      handleStateNum(operation);
+      setNewNum(true);
     } else {
-      console.log(actualNum);
+      switch (operation) {
+        case "sum":
+          handleStateNum("sum", sum("", callOnUseEffectOrSecondTime));
+          break;
+        case "rest":
+          handleStateNum("rest", rest(callOnUseEffectOrSecondTime));
+          break;
+        case "multiply":
+          handleStateNum("multiply", multiply(callOnUseEffectOrSecondTime));
+          break;
+      }
+    }
+  };
+
+  const handleStateNum = (operation, result) => {
+    if (!result) {
       setOldNum(actualNum);
       setActuaNum(["0"]);
-      setIstSum(true);
     }
 
-    if (resultSum) {
-      setNewNum(true);
+    switch (operation) {
+      case "sum":
+        setIstSum(true);
+        if (result) {
+          setIstSum(false);
+        }
+        break;
+      case "rest":
+        setIstRest(true);
+        if (result) {
+          setIstRest(false);
+        }
+        break;
+      case "multiply":
+        setIstMultiply(true);
+        if (result) {
+          setIstMultiply(false);
+        }
+        break;
+    }
+
+    if (result) {
+      setActuaNum(result);
+      setNewNum(false);
+      setOperateScreenValue(true);
     }
   };
 
@@ -57,11 +140,16 @@ const Calculator = () => {
       return;
     }
 
-    if (isSum && newNum) {
-      sum(true);
+    if (newNum) {
+      if (isSum) {
+        //sum(true);
+        handleOperation("sum", true);
+      } else if (isRest) {
+        handleOperation("rest", true);
+      } else if (isMultiply) {
+        handleOperation("multiply", true);
+      }
     }
-
-    console.log("useEffect ran. count is: ", newNum);
   }, [newNum, isSum]); //
 
   return (
@@ -98,7 +186,9 @@ const Calculator = () => {
             </div>
           </div>
           <div className="col">
-            <div className="btn">X</div>
+            <div className="btn" onClick={() => handleOperation("multiply")}>
+              X
+            </div>
           </div>
         </div>
         <div className="row">
@@ -118,7 +208,9 @@ const Calculator = () => {
             </div>
           </div>
           <div className="col">
-            <div className="btn">-</div>
+            <div className="btn" onClick={() => handleOperation("rest")}>
+              -
+            </div>
           </div>
         </div>
         <div className="row">
@@ -138,7 +230,7 @@ const Calculator = () => {
             </div>
           </div>
           <div className="col">
-            <div className="btn" onClick={() => sum()}>
+            <div className="btn" onClick={() => handleOperation("sum")}>
               +
             </div>
           </div>
