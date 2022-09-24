@@ -9,6 +9,7 @@ const Calculator = () => {
   const [isRest, setIstRest] = useState(false);
   const [isMultiply, setIstMultiply] = useState(false);
   const [isDivide, setIstDivide] = useState(false);
+  const [isValueToLong, setIsValueToLong] = useState(false);
 
   const printOnScreen = (numValue) => {
     if (!numValue && numValue !== 0) {
@@ -19,9 +20,20 @@ const Calculator = () => {
   };
 
   const transformDataValues = (num) => {
-    const newActualNumbber = `${
-      typeof actualNum === "string" ? actualNum : actualNum.join("")
-    }${num}`.split("");
+    let newActualNumbber;
+
+    if (actualNum.length >= 8) {
+      newActualNumbber = `${
+        typeof actualNum === "string" ? actualNum : actualNum.join("")
+      }`;
+      console.log("valor demasiado largo");
+      setIsValueToLong(true);
+    } else {
+      newActualNumbber = `${
+        typeof actualNum === "string" ? actualNum : actualNum.join("")
+      }${num}`.split("");
+      setIsValueToLong(false);
+    }
     if (newActualNumbber.length > 1 && newActualNumbber[0] == 0) {
       newActualNumbber.shift();
     }
@@ -65,6 +77,7 @@ const Calculator = () => {
   };
 
   const operateNumber = (operation, callOnUseEffect) => {
+    setIsValueToLong(false);
     if (callOnUseEffect) {
       switch (operation) {
         case "sum":
@@ -139,6 +152,9 @@ const Calculator = () => {
   return (
     <>
       <div className="calculator-container">
+        {isValueToLong ? (
+          <div className="bubble-message">El valor es demasiado largo</div>
+        ) : null}
         <div className="screen">{actualNum}</div>
         <div className="row">
           <div className="col">
