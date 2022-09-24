@@ -6,6 +6,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  font-weight: 700;
+  color: #fff;
+  font-size: 1.5rem;
 }
 
 .iphone-x .calculator-container {
@@ -18,7 +21,20 @@
 }
 
 .iphone-x .btn.first {
-  margin-left: 78px;
+  margin-left: 162px;
+}
+
+.iphone-x .btn-gray {
+  background-color: rgb(149 143 143);
+  color: #000;
+}
+
+.iphone-x .btn-dark-gray {
+  background-color: rgb(76 72 72);
+}
+
+.iphone-x .btn-yellow {
+  background-color: rgb(227 152 60);
 }
 
 .iphone-x .calculator-container .screen {
