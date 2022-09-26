@@ -44,3 +44,26 @@
   font-size: 4.5rem;
   text-align: right;
 }
+
+@media screen and (max-height: 720px) {
+  .iphone-x .calculator-container {
+    padding: 66% 10% 10%;
+  }
+  .iphone-x .btn {
+    width: 46px;
+    height: 46px;
+    font-size: 1.2rem;
+  }
+
+  .iphone-x .btn.first {
+    margin-left: 142px;
+  }
+
+  .iphone-x .btn-lg {
+    width: 122px;
+  }
+
+  .iphone-x .calculator-container .screen {
+    font-size: 3.7rem;
+  }
+}

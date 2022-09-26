@@ -14,6 +14,7 @@ const Calculator = () => {
   const printOnScreen = (numValue) => {
     if (!numValue && numValue !== 0) {
       setActuaNum(["0"]);
+      setIsValueToLong(false);
     } else {
       setActuaNum(transformDataValues(numValue));
     }
@@ -26,7 +27,6 @@ const Calculator = () => {
       newActualNumbber = `${
         typeof actualNum === "string" ? actualNum : actualNum.join("")
       }`;
-      console.log("valor demasiado largo");
       setIsValueToLong(true);
     } else {
       newActualNumbber = `${
@@ -47,13 +47,11 @@ const Calculator = () => {
     } else {
       trasnformValueToCollect = value;
     }
-    console.log(value);
     return +trasnformValueToCollect.join("").replace(",", ".");
   };
 
   const sum = () => {
     const resultSum = [transformeToInt(oldNum) + transformeToInt(actualNum)];
-    console.log(resultSum[0].toFixed(2));
     return String(resultSum[0].toFixed(2)).replace(".", ",");
   };
 
@@ -81,19 +79,19 @@ const Calculator = () => {
     if (callOnUseEffect) {
       switch (operation) {
         case "sum":
-          handleNumState(callOnUseEffect, sum);
+          handleNumState(callOnUseEffect, sum());
           setIstSum(false);
           break;
         case "rest":
-          handleNumState(callOnUseEffect, rest);
+          handleNumState(callOnUseEffect, rest());
           setIstRest(false);
           break;
         case "multiply":
-          handleNumState(callOnUseEffect, multiply);
+          handleNumState(callOnUseEffect, multiply());
           setIstMultiply(false);
           break;
         case "divide":
-          handleNumState(callOnUseEffect, divide);
+          handleNumState(callOnUseEffect, divide());
           setIstDivide(false);
           break;
       }
@@ -118,7 +116,14 @@ const Calculator = () => {
 
   const handleNumState = (callOnUseEffect, result) => {
     if (callOnUseEffect && result) {
-      setActuaNum(result);
+      if (result.length < 8) {
+        setActuaNum(result.replace(",00", ""));
+        setIsValueToLong(false);
+      } else {
+        setOldNum(actualNum);
+        setActuaNum(["0"]);
+        setIsValueToLong(true);
+      }
       setNewNum(false);
     } else {
       setOldNum(actualNum);
@@ -145,15 +150,15 @@ const Calculator = () => {
         operateNumber("divide", true);
       }
     }
-
-    console.log("useEffect ran. count is: ", newNum);
-  }, [newNum, isSum]); //
+  }, [newNum, isSum]);
 
   return (
     <>
       <div className="calculator-container">
         {isValueToLong ? (
-          <div className="bubble-message">El valor es demasiado largo</div>
+          <div className="bubble-message fade-in-fwd">
+            El valor es demasiado largo, inténtelo con valores más pequeños.
+          </div>
         ) : null}
         <div className="screen">{actualNum}</div>
         <div className="row">
