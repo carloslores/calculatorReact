@@ -16,6 +16,9 @@ const Calculator = () => {
       setActuaNum(["0"]);
       setIsValueToLong(false);
     } else {
+      if (typeof numValue === "string" && actualNum.includes(",")) {
+        numValue = "";
+      }
       setActuaNum(transformDataValues(numValue));
     }
   };
