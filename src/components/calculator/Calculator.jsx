@@ -94,6 +94,8 @@ const Calculator = () => {
           handleNumState(callOnUseEffect, divide());
           setIstDivide(false);
           break;
+        default:
+          break;
       }
     } else {
       handleNumState(false);
@@ -109,6 +111,8 @@ const Calculator = () => {
           break;
         case "divide":
           setIstDivide(true);
+          break;
+        default:
           break;
       }
     }
